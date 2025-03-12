@@ -5,7 +5,6 @@ use anchor_lang::prelude::*;
 #[cfg_attr(feature = "client", derive(Debug))]
 #[derive(Clone, Debug)]
 pub struct LpChangeEvent {
-    #[index]
     pub pool_id: Pubkey,
     pub lp_amount_before: u64,
     // vault_0 amount - trade_fees
@@ -29,7 +28,6 @@ pub struct LpChangeEvent {
 #[cfg_attr(feature = "client", derive(Debug))]
 #[derive(Clone, Debug)]
 pub struct SwapEvent {
-    #[index]
     pub pool_id: Pubkey,
     /// pool vault - trade_fees
     pub input_vault_before: u64,

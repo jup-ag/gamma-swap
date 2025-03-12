@@ -130,13 +130,13 @@ pub fn handle_program_log(
         };
 
         let mut slice: &[u8] = &borsh_bytes[..];
-        let disc: [u8; 8] = {
-            let mut disc = [0; 8];
+        let disc: Vec<u8> = {
+            let mut disc = vec![];
             disc.copy_from_slice(&borsh_bytes[..8]);
             slice = &slice[8..];
             disc
         };
-        match disc {
+        match disc.as_slice() {
             SwapEvent::DISCRIMINATOR => {
                 println!("{:#?}", decode_event::<SwapEvent>(&mut slice)?);
             }
@@ -298,15 +298,15 @@ pub fn handle_program_instruction(
     }
 
     let mut ix_data: &[u8] = &data[..];
-    let disc: [u8; 8] = {
-        let mut disc = [0; 8];
+    let disc: Vec<u8> = {
+        let mut disc = vec![];
         disc.copy_from_slice(&data[..8]);
         ix_data = &ix_data[8..];
         disc
     };
     // println!("{:?}", disc);
 
-    match disc {
+    match disc.as_slice() {
         instruction::CreateAmmConfig::DISCRIMINATOR => {
             let ix = decode_instruction::<instruction::CreateAmmConfig>(&mut ix_data).unwrap();
             #[derive(Debug)]
