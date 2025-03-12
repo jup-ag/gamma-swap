@@ -72,3 +72,6 @@ solana-bpf-simulator = { git = "https://github.com/dovahcrow/solana-bpf-simulato
 gamma = { path = "programs/gamma", features = ["no-entrypoint"] }
 fixed = { version = "=1.28.0" }
 fixed-macro = "1.1"
+
+[patch.crates-io]
+curve25519-dalek = { git = "https://github.com/unstoppablefi/curve25519-dalek", branch = "release/3.2" }
