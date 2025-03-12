@@ -37,7 +37,7 @@ jupiter-amm-interface = "0.4.5"
 once_cell = "1"
 peace-lock = "0.1"
 proptest = "1.0"
-quickcheck = "0.9"
+quickcheck = "0.9"      
 rand = "0.8.5"
 referral = { git = "https://github.com/GooseFX1/gfx-referral.git", branch = "make-types-public-0.30.1", features = ["cpi", "mainnet"] }
 regex = "1"
@@ -70,7 +70,7 @@ base64 = "0.21.0"
 solana-bpf-simulator = { git = "https://github.com/dovahcrow/solana-bpf-simulator" }
 
 gamma = { path = "programs/gamma", features = ["no-entrypoint"] }
-fixed = { version = "=1.28.0" }
+fixed = "=1.28.0"
 fixed-macro = "1.1"
 
 [patch.crates-io]
