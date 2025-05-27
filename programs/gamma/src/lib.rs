@@ -1,11 +1,12 @@
 pub mod curve;
 pub mod error;
-mod external;
+pub mod external;
 pub mod fees;
 pub mod instructions;
 pub mod migration;
 pub mod states;
 pub mod utils;
+pub mod tests;
 
 use anchor_lang::prelude::*;
 use instructions::*;

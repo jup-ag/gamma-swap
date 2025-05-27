@@ -18,7 +18,7 @@ use std::sync::Arc;
 use anchor_lang::ToAccountMetas;
 // Add to Cargo.toml
 // gamma-os = { package = "gamma", git = "https://github.com/GooseFX1/gamma-swap", branch = "master" }
-use gamma::{
+use crate::{
     curve::{ConstantProductCurve, CurveCalculator, SwapResult, TradeDirection},
     fees::{ceil_div, DynamicFee, FeeType, StaticFee, FEE_RATE_DENOMINATOR_VALUE},
     states::{AmmConfig, ObservationState, PoolStatusBitIndex},
@@ -53,7 +53,7 @@ impl Gamma {
     fn get_authority(&self) -> Pubkey {
         Pubkey::create_program_address(
             &[AUTH_SEED.as_bytes(), &[self.pool_state.auth_bump]],
-            &gamma::ID,
+            &crate::ID,
         )
         .unwrap()
     }
@@ -81,7 +81,7 @@ impl Amm for Gamma {
     }
 
     fn program_id(&self) -> Pubkey {
-        gamma::id()
+        crate::ID
     }
 
     fn key(&self) -> Pubkey {
@@ -325,7 +325,7 @@ impl Amm for Gamma {
             )
         };
 
-        let account_metas = gamma::accounts::Swap {
+        let account_metas = crate::accounts::Swap {
             payer: swap_params.token_transfer_authority,
             authority: self.get_authority(),
             amm_config: self.pool_state.amm_config,
@@ -510,7 +510,7 @@ impl OracleBasedSwapCalculator {
     ) -> Result<SwapResult> {
         let oracle_price_updated_at = pool_state.oracle_price_updated_at;
         let difference = block_timestamp.saturating_sub(oracle_price_updated_at);
-        let pool_state_gamma_os: gamma::states::PoolState = pool_state.into();
+        let pool_state_gamma_os: crate::states::PoolState = pool_state.into();
 
         if difference > pool_state.max_oracle_price_update_time_diff as u64
             || block_timestamp < oracle_price_updated_at
@@ -751,8 +751,8 @@ impl OracleBasedSwapCalculator {
 
 mod gamma_deseralize_pool_state {
     use super::*;
+    use crate::states::PartnerInfo;
     use anchor_lang::{prelude::AnchorDeserialize, Discriminator};
-    use gamma::states::PartnerInfo;
     use std::ops::BitAnd;
 
     #[derive(Default, Debug, AnchorDeserialize, Clone)]
@@ -813,7 +813,7 @@ mod gamma_deseralize_pool_state {
     }
 
     impl PoolState {
-        const ACCOUNT_DISCRIMINATOR: &[u8] = gamma::states::PoolState::DISCRIMINATOR;
+        const ACCOUNT_DISCRIMINATOR: &[u8] = crate::states::PoolState::DISCRIMINATOR;
 
         pub fn deserialize_account(data: &[u8]) -> Result<Self> {
             if data[0..8] != *Self::ACCOUNT_DISCRIMINATOR {
@@ -842,9 +842,9 @@ mod gamma_deseralize_pool_state {
         }
     }
 
-    impl Into<gamma::states::PoolState> for &PoolState {
-        fn into(self) -> gamma::states::PoolState {
-            gamma::states::PoolState {
+    impl Into<crate::states::PoolState> for &PoolState {
+        fn into(self) -> crate::states::PoolState {
+            crate::states::PoolState {
                 amm_config: self.amm_config,
                 pool_creator: self.pool_creator,
                 token_0_vault: self.token_0_vault,

@@ -36,6 +36,14 @@ uint = { workspace = true }
 bytemuck={workspace=true}
 fixed={workspace=true}
 fixed-macro={workspace=true}
+anyhow={workspace=true}
+solana-sdk={workspace=true}
+spl-token-2022={workspace=true}
+jupiter-amm-interface={workspace=true}
+borsh="0.10"
+solana-program-runtime={workspace=true}
+solana-program-test={workspace=true}
+
 
 [dev-dependencies]
 proptest = { workspace = true }

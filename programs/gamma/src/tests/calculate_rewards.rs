@@ -1,7 +1,7 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anchor_lang::pubkey;
-use gamma::{
+use crate::gamma::{
     states::{UserPoolLiquidity, UserRewardInfo, USER_POOL_LIQUIDITY_SEED},
     REWARD_INFO_SEED, USER_REWARD_INFO_SEED,
 };
