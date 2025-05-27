@@ -307,6 +307,8 @@ pub fn withdraw_instr(
             vault_1_mint: token_1_mint,
             // lp_mint: token_lp_mint,
             memo_program: spl_memo::id(),
+            kamino_program: todo!(),
+            instruction_sysvar_account: todo!(),
         })
         .args(gamma_instructions::Withdraw {
             lp_token_amount,

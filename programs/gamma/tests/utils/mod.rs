@@ -211,7 +211,7 @@ pub fn get_current_price_token_0_price(observation: ObservationState) -> u128 {
 }
 
 pub struct ProgramInfo {
-    pub program_name: String,
+    pub program_name: &'static str,
     pub program_id: Pubkey,
     pub process_instruction: Option<BuiltinFunctionWithContext>,
 }
