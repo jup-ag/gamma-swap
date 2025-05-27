@@ -749,7 +749,7 @@ impl OracleBasedSwapCalculator {
     }
 }
 
-mod gamma_deseralize_pool_state {
+pub mod gamma_deseralize_pool_state {
     use super::*;
     use crate::states::PartnerInfo;
     use anchor_lang::{prelude::AnchorDeserialize, Discriminator};
