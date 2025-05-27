@@ -1,4 +1,5 @@
 use crate::{
+    error::GammaError,
     states::{PoolState, RewardInfo, UserPoolLiquidity, UserRewardInfo, USER_POOL_LIQUIDITY_SEED},
     USER_REWARD_INFO_SEED,
 };
@@ -7,7 +8,11 @@ use anchor_lang::prelude::*;
 #[derive(Accounts)]
 pub struct CalculateRewards<'info> {
     #[account(mut)]
-    pub user: Signer<'info>,
+    pub signer: Signer<'info>,
+
+    /// User for which we are calculating rewards
+    /// CHECK: Does not require any validation
+    pub user: AccountInfo<'info>,
 
     #[account()]
     pub pool_state: AccountLoader<'info, PoolState>,
@@ -26,7 +31,7 @@ pub struct CalculateRewards<'info> {
     #[account(
         init_if_needed,
         space = 8 + std::mem::size_of::<UserRewardInfo>(),
-        payer = user,
+        payer = signer,
         seeds = [
             USER_REWARD_INFO_SEED.as_bytes(),
             reward_info.key().as_ref(),
@@ -51,10 +56,22 @@ pub struct CalculateRewards<'info> {
 }
 
 pub fn calculate_rewards(ctx: Context<CalculateRewards>) -> Result<()> {
+    #[cfg(not(feature = "test-sbf"))]
+    if ctx.accounts.signer.key() != crate::CALCULATE_REWARDS_ADMIN {
+        return err!(GammaError::InvalidOwner);
+    }
+
     let pool_state = &mut ctx.accounts.pool_state.load()?;
     let current_time = Clock::get()?.unix_timestamp as u64;
     if ctx.accounts.user_reward_info.rewards_last_calculated_at >= current_time {
         return Ok(());
+    }
+    // Start accrual of rewards from the time user first deposit.
+    // This prevents the user from creating a invest at the end of rewards and getting
+    // boosted rewards for the full period.
+    if ctx.accounts.user_reward_info.rewards_last_calculated_at == 0 {
+        ctx.accounts.user_reward_info.rewards_last_calculated_at =
+            ctx.accounts.user_pool_liquidity.first_investment_at;
     }
 
     let user_reward_info = &mut ctx.accounts.user_reward_info;
@@ -63,6 +80,10 @@ pub fn calculate_rewards(ctx: Context<CalculateRewards>) -> Result<()> {
         pool_state.lp_supply as u64,
         &ctx.accounts.reward_info,
     )?;
+
+    user_reward_info.reward_info = ctx.accounts.reward_info.key();
+    user_reward_info.user = ctx.accounts.user.key();
+    user_reward_info.pool_state = ctx.accounts.pool_state.key();
 
     Ok(())
 }

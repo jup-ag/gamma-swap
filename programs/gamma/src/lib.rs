@@ -38,6 +38,8 @@ pub mod create_pool_fee_reveiver {
     declare_id!("8PhehuioLjhJ35A5eavazJSwoXcA4J7WwzgoWDBDFSuY");
 }
 
+pub const CALCULATE_REWARDS_ADMIN: Pubkey = pubkey!("5CW8MEhPPxiRmwWgigwpCKCHaZDLX62BkrneijrxoKkR");
+
 pub const AUTH_SEED: &str = "vault_and_lp_mint_auth_seed";
 pub const REWARD_VAULT_SEED: &str = "reward_vault_seed";
 pub const REWARD_INFO_SEED: &str = "reward_info_seed";
@@ -232,12 +234,15 @@ pub mod gamma {
     /// * `minimum_token_0_amount` -  Minimum amount of token 0 to receive, prevents excessive slippage
     /// * `minimum_token_1_amount` -  Minimum amount of token 1 to receive, prevents excessive slippage
     ///
-    pub fn withdraw(
-        ctx: Context<Withdraw>,
+    pub fn withdraw<'c, 'info>(
+        ctx: Context<'_, '_, 'c, 'info, Withdraw<'info>>,
         lp_token_amount: u64,
         minimum_token_0_amount: u64,
         minimum_token_1_amount: u64,
-    ) -> Result<()> {
+    ) -> Result<()>
+    where
+        'c: 'info,
+    {
         instructions::withdraw(
             ctx,
             lp_token_amount,
@@ -254,6 +259,7 @@ pub mod gamma {
     /// * `amount_in` -  input amount to transfer, output to DESTINATION is based on the exchange rate
     /// * `minimum_amount_out` -  Minimum amount of output token, prevents excessive slippage
     ///
+    /// #[deprecated(note = "Use oracle_based_swap_base_input instead")]
     pub fn swap_base_input<'c, 'info>(
         ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
         amount_in: u64,
@@ -270,12 +276,29 @@ pub mod gamma {
     /// * `max_amount_in` -  input amount prevents excessive slippage
     /// * `amount_out` -  amount of output token
     ///
+    /// #[deprecated(note = "Use oracle_based_swap_base_input instead")]
     pub fn swap_base_output<'c, 'info>(
         ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
         max_amount_in: u64,
         amount_out: u64,
     ) -> Result<()> {
         instructions::swap_base_output(ctx, max_amount_in, amount_out)
+    }
+
+    /// Swap the tokens in the pool base input amount, using oracle price and Curve calculator combined.
+    ///
+    /// # Arguments
+    ///
+    /// * `ctx`- The context of accounts
+    /// * `amount_in` -  input amount to transfer, output to DESTINATION is based on the exchange rate
+    /// * `minimum_amount_out` -  Minimum amount of output token, prevents excessive slippage
+    pub fn oracle_based_swap_base_input<'c, 'info>(
+        ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
+        amount_in: u64,
+        minimum_amount_out: u64,
+    ) -> Result<()> {
+        // This if for demo purposes, and cpi and aggregator transaction purposes only.
+        Ok(())
     }
 
     /// Create rewards for the pool

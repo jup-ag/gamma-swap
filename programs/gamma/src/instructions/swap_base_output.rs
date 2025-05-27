@@ -13,6 +13,7 @@ pub fn swap_base_output<'c, 'info>(
     max_amount_in: u64,
     amount_out_less_fee: u64,
 ) -> Result<()> {
+    require_gt!(amount_out_less_fee, 0);
     let swap_remaining_accounts = SwapRemainingAccounts::new(&ctx.remaining_accounts);
     let referral_info = extract_referral_info(
         ctx.accounts.input_token_mint.key(),
@@ -248,9 +249,13 @@ pub fn swap_base_output<'c, 'info>(
                 .ok_or(GammaError::MathOverflow)?;
             pool_state.cumulative_volume_token_0 = pool_state
                 .cumulative_volume_token_0
-                .checked_add(source_amount_swapped as u128)
+                .checked_add(input_transfer_amount as u128)
                 .ok_or(GammaError::MathOverflow)?;
-
+            pool_state.cumulative_volume_token_1 = pool_state
+                .cumulative_volume_token_1
+                .checked_add(output_transfer_amount as u128)
+                .ok_or(GammaError::MathOverflow)?;
+            
             pool_state.token_0_vault_amount = pool_state
                 .token_0_vault_amount
                 .checked_add(source_amount_swapped)
@@ -280,7 +285,11 @@ pub fn swap_base_output<'c, 'info>(
                 .ok_or(GammaError::MathOverflow)?;
             pool_state.cumulative_volume_token_1 = pool_state
                 .cumulative_volume_token_1
-                .checked_add(source_amount_swapped as u128)
+                .checked_add(input_transfer_amount as u128)
+                .ok_or(GammaError::MathOverflow)?;
+            pool_state.cumulative_volume_token_0 = pool_state
+                .cumulative_volume_token_0
+                .checked_add(output_transfer_amount as u128)
                 .ok_or(GammaError::MathOverflow)?;
 
             pool_state.token_1_vault_amount = pool_state
