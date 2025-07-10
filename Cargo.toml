@@ -12,11 +12,11 @@ incremental = false
 codegen-units = 1
 
 [workspace.dependencies]
-anchor-client = { version = "0.30.1" }
+anchor-client = { version = "0.31.1" }
 anchor-gen = "0.3.1"
-anchor-lang = { version = "0.30.1", features = ["init-if-needed"] }
-anchor-spl = { version = "0.30.1" }
-spl-associated-token-account = "6.0.0"
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+anchor-spl = { version = "0.31.1" }
+spl-associated-token-account = "7.0.0"
 anyhow = "1"
 arrayref = "0.3.7"
 bincode = "1.3.3"
@@ -36,7 +36,7 @@ peace-lock = "0.1"
 proptest = "1.0"
 quickcheck = "0.9"
 rand = "0.8.5"
-referral = { git = "https://github.com/jup-ag/gfx-referral.git", rev = "8647e140def2ddb78cb13c4def39759b6b01de90", features = [
+referral = { git = "https://github.com/jup-ag/gfx-referral.git", rev = "643f26c5a2db899d3c1eb54a5a09d302149f7ccb", features = [
     "cpi",
     "mainnet",
 ] }
@@ -54,8 +54,8 @@ solana-security-txt = "1.1.1"
 solana-transaction-status = "2"
 spl-math = { version = "0.3.0", features = ["no-entrypoint"] }
 spl-memo = "6.0.0"
-spl-token = { version = "7.0.0", features = ["no-entrypoint"] }
-spl-token-2022 = { version = "7.0.0", features = ["no-entrypoint"] }
+spl-token = { version = "8.0.0", features = ["no-entrypoint"] }
+spl-token-2022 = { version = "9.0.0", features = ["no-entrypoint"] }
 spl-token-client = "0.14.0"
 static_init = "1.0.3"
 tokio = { version = "1", features = ["macros"] }
@@ -68,13 +68,9 @@ ahash = "0.8.11"
 
 
 base64 = "0.21.0"
-solana-bpf-simulator = { git = "https://github.com/dovahcrow/solana-bpf-simulator" }
+# solana-bpf-simulator = { git = "https://github.com/dovahcrow/solana-bpf-simulator" }
 
 gamma = { path = "programs/gamma", features = ["no-entrypoint"] }
 fixed = "=1.28.0"
 fixed-macro = "1.1"
 
-[patch.crates-io]
-anchor-lang = { git = "https://github.com/jup-ag/anchor.git", rev = "fa381028b6c28ab865644ac9ab02948ba30a89a2" }
-anchor-spl = { git = "https://github.com/jup-ag/anchor.git", rev = "fa381028b6c28ab865644ac9ab02948ba30a89a2" }
-anchor-client = { git = "https://github.com/jup-ag/anchor.git", rev = "fa381028b6c28ab865644ac9ab02948ba30a89a2" }
