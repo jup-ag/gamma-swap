@@ -29,7 +29,6 @@ referral = { workspace = true }
 rust_decimal ={ workspace = true}
 solana-security-txt = { workspace = true }
 spl-associated-token-account= {workspace=true}
-spl-math = { workspace = true }
 spl-memo = { workspace = true }
 spl-token = { workspace = true }
 uint = { workspace = true }
@@ -41,8 +40,6 @@ solana-sdk={workspace=true}
 spl-token-2022={workspace=true}
 jupiter-amm-interface={workspace=true}
 borsh="0.10"
-solana-program-runtime={workspace=true}
-solana-program-test={workspace=true}
 
 
 [dev-dependencies]

@@ -1994,12 +1994,11 @@ dependencies = [
  "solana-sdk",
  "solana-security-txt",
  "spl-associated-token-account 7.0.0",
- "spl-math",
  "spl-memo",
  "spl-token 8.0.0",
  "spl-token-2022 9.0.0",
  "static_init",
- "uint 0.9.5",
+ "uint",
 ]
 
 [[package]]
@@ -7812,20 +7811,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "spl-math"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cc5a6cc7a4f0cf7813ce44153bba73280909f697d7f6baf7b9f223a255e7887"
-dependencies = [
- "borsh 1.5.7",
- "num-derive",
- "num-traits",
- "solana-program",
- "thiserror 1.0.68",
- "uint 0.10.0",
-]
-
-[[package]]
 name = "spl-memo"
 version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9118,18 +9103,6 @@ name = "uint"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "76f64bba2c53b04fcab63c01a7d7427eadc821e3bc48c34dc9ba29c501164b52"
-dependencies = [
- "byteorder",
- "crunchy",
- "hex",
- "static_assertions",
-]
-
-[[package]]
-name = "uint"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "909988d098b2f738727b161a106cfc7cab00c539c2687a8836f8e565976fb53e"
 dependencies = [
  "byteorder",
  "crunchy",
