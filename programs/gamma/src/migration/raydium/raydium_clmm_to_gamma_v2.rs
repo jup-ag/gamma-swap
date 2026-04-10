@@ -50,7 +50,7 @@ pub struct RaydiumClmmToGammaV2<'info> {
     pub raydium_clmm_tick_array_upper: UncheckedAccount<'info>,
 
     /// CHECK: memo program
-    #[account(address = spl_memo::id())]
+    #[account(address = Pubkey::new_from_array(spl_memo_interface::v3::id().to_bytes()))]
     pub memo_program: UncheckedAccount<'info>,
 
     /// Owner of the liquidity provided
@@ -147,8 +147,8 @@ pub struct RaydiumClmmToGammaV2<'info> {
     // pub tick_array_bitmap: UncheckedAccount<'info>,
 }
 
-pub fn raydium_clmm_to_gamma_v2<'a, 'b, 'c, 'info>(
-    ctx: Context<'a, 'b, 'c, 'info, RaydiumClmmToGammaV2<'info>>,
+pub fn raydium_clmm_to_gamma_v2<'info>(
+    ctx: Context<'info, RaydiumClmmToGammaV2<'info>>,
     liquidity: u128,
     amount_0_min: u64,
     amount_1_min: u64,
@@ -184,7 +184,7 @@ pub fn raydium_clmm_to_gamma_v2<'a, 'b, 'c, 'info>(
         vault1_mint: ctx.accounts.gamma_vault_1_mint.to_account_info(),
     };
     let cpi_context = CpiContext::new(
-        ctx.accounts.raydium_clmm_program.to_account_info(),
+        ctx.accounts.raydium_clmm_program.key(),
         cpi_accounts,
     )
     .with_remaining_accounts(ctx.remaining_accounts.to_vec());

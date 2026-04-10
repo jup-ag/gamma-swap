@@ -6,7 +6,7 @@ use colorful::Colorful;
 use gamma::instruction;
 use gamma::states::*;
 use regex::Regex;
-use solana_transaction_status::{
+use solana_transaction_status_client_types::{
     option_serializer::OptionSerializer, EncodedTransaction, UiTransactionStatusMeta,
 };
 
@@ -183,13 +183,13 @@ pub fn parse_program_instruction(
     meta: Option<UiTransactionStatusMeta>,
 ) -> Result<(), ClientError> {
     let ui_raw_msg = match encoded_transaction {
-        solana_transaction_status::EncodedTransaction::Json(ui_tx) => {
+        EncodedTransaction::Json(ui_tx) => {
             let ui_message = ui_tx.message;
             // println!("{:#?}", ui_message);
             match ui_message {
-                solana_transaction_status::UiMessage::Raw(ui_raw_msg) => ui_raw_msg,
-                _ => solana_transaction_status::UiRawMessage {
-                    header: solana_sdk::message::MessageHeader::default(),
+                solana_transaction_status_client_types::UiMessage::Raw(ui_raw_msg) => ui_raw_msg,
+                _ => solana_transaction_status_client_types::UiRawMessage {
+                    header: Default::default(),
                     account_keys: Vec::new(),
                     recent_blockhash: "".to_string(),
                     instructions: Vec::new(),
@@ -197,8 +197,8 @@ pub fn parse_program_instruction(
                 },
             }
         }
-        _ => solana_transaction_status::UiRawMessage {
-            header: solana_sdk::message::MessageHeader::default(),
+        _ => solana_transaction_status_client_types::UiRawMessage {
+            header: Default::default(),
             account_keys: Vec::new(),
             recent_blockhash: "".to_string(),
             instructions: Vec::new(),
@@ -240,7 +240,7 @@ pub fn parse_program_instruction(
                 for inner in inner_instructions {
                     for (i, instruction) in inner.instructions.iter().enumerate() {
                         match instruction {
-                            solana_transaction_status::UiInstruction::Compiled(
+                            solana_transaction_status_client_types::UiInstruction::Compiled(
                                 ui_compiled_instruction,
                             ) => {
                                 if (ui_compiled_instruction.program_id_index as usize)

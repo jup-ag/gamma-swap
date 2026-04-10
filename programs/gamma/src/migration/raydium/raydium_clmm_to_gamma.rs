@@ -139,8 +139,8 @@ pub struct RaydiumClmmToGamma<'info> {
     // pub tick_array_bitmap: UncheckedAccount<'info>,
 }
 
-pub fn raydium_clmm_to_gamma<'a, 'b, 'c, 'info>(
-    ctx: Context<'a, 'b, 'c, 'info, RaydiumClmmToGamma<'info>>,
+pub fn raydium_clmm_to_gamma<'info>(
+    ctx: Context<'info, RaydiumClmmToGamma<'info>>,
     liquidity: u128,
     amount_0_min: u64,
     amount_1_min: u64,
@@ -172,7 +172,7 @@ pub fn raydium_clmm_to_gamma<'a, 'b, 'c, 'info>(
         token_program: ctx.accounts.token_program.to_account_info(),
     };
     let cpi_context = CpiContext::new(
-        ctx.accounts.raydium_clmm_program.to_account_info(),
+        ctx.accounts.raydium_clmm_program.key(),
         cpi_accounts,
     )
     .with_remaining_accounts(ctx.remaining_accounts.to_vec());

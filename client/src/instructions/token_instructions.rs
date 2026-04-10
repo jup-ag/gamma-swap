@@ -1,20 +1,20 @@
 use super::super::{read_keypair_file, ClientConfig};
 use anchor_client::{Client, Cluster};
 use anyhow::Result;
+use solana_account::WritableAccount;
 use solana_client::rpc_client::RpcClient;
-use solana_sdk::{
-    account::WritableAccount,
-    instruction::Instruction,
-    program_pack::Pack,
-    pubkey::Pubkey,
-    signature::{Keypair, Signer},
-    system_instruction,
-};
-use spl_token_2022::{
+use solana_keypair::Keypair;
+use solana_program_pack::Pack;
+use solana_pubkey::Pubkey;
+use solana_signer::Signer;
+use solana_system_interface::instruction as system_instruction;
+use solana_transaction::Instruction;
+use spl_token_2022_interface as spl_token_2022;
+use spl_token_2022_interface::{
     extension::{BaseStateWithExtensions, ExtensionType, StateWithExtensionsMut},
     state::{Account, Mint},
 };
-use spl_token_client::token::ExtensionInitializationParams;
+use spl_token_interface as spl_token;
 use std::{rc::Rc, str::FromStr};
 
 pub fn create_and_init_mint_instr(
@@ -23,7 +23,6 @@ pub fn create_and_init_mint_instr(
     mint_key: &Pubkey,
     mint_authority: &Pubkey,
     freeze_authority: Option<&Pubkey>,
-    extension_init_params: Vec<ExtensionInitializationParams>,
     decimals: u8,
 ) -> Result<Vec<Instruction>> {
     let payer = read_keypair_file(&config.payer_path)?;
@@ -35,11 +34,7 @@ pub fn create_and_init_mint_instr(
     } else {
         client.program(spl_token_2022::id())?
     };
-    let extension_types = extension_init_params
-        .iter()
-        .map(|e| e.extension())
-        .collect::<Vec<_>>();
-    let space = ExtensionType::try_calculate_account_len::<Mint>(&extension_types)?;
+    let space = ExtensionType::try_calculate_account_len::<Mint>(&[])?;
 
     let mut instructions = vec![system_instruction::create_account(
         &program.payer(),
@@ -50,9 +45,6 @@ pub fn create_and_init_mint_instr(
         space as u64,
         &program.id(),
     )];
-    for params in extension_init_params {
-        instructions.push(params.instruction(&token_program, &mint_key)?);
-    }
     instructions.push(spl_token_2022::instruction::initialize_mint(
         &program.id(),
         mint_key,
@@ -85,7 +77,7 @@ pub fn create_account_rent_exmpt_instr(
             data_size as u64,
             &program.id(),
         ))
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -110,7 +102,7 @@ pub fn create_ata_token_account_instr(
                 &token_program,
             ),
         )
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -168,7 +160,7 @@ pub fn create_and_init_auxiliary_token(
             mint,
             owner,
         )?)
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -193,7 +185,7 @@ pub fn close_token_account(
             &[],
         )?)
         .signer(owner)
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -220,7 +212,7 @@ pub fn spl_token_transfer_instr(
             amount,
         )?)
         .signer(from_authority)
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -252,7 +244,7 @@ pub fn spl_token_mint_to_instr(
             amount,
         )?)
         .signer(mint_authority)
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -286,6 +278,6 @@ pub fn wrap_sol_instr(config: &ClientConfig, amount: u64) -> Result<Vec<Instruct
             &program.id(),
             &wsol_ata_account,
         )?)
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }

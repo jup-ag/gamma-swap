@@ -3,7 +3,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use anchor_spl::token::TokenAccount;
 use gamma::{states::UserRewardInfo, REWARD_INFO_SEED, USER_REWARD_INFO_SEED};
 use solana_program_test::tokio;
-use solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer};
+use solana_keypair::Keypair;
+use solana_pubkey::Pubkey;
+use solana_signer::Signer;
 mod utils;
 
 use utils::*;

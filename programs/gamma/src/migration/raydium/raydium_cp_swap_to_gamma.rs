@@ -56,7 +56,7 @@ pub struct RaydiumCpSwapToGamma<'info> {
 
     /// memo program
     /// CHECK:
-    #[account(address = spl_memo::id())]
+    #[account(address = Pubkey::new_from_array(spl_memo_interface::v3::id().to_bytes()))]
     pub memo_program: UncheckedAccount<'info>,
 
     /// Owner of the liquidity provided
@@ -139,8 +139,8 @@ pub struct RaydiumCpSwapToGamma<'info> {
     pub token_program_2022: Program<'info, Token2022>,
 }
 
-pub fn raydium_cp_swap_to_gamma<'a, 'b, 'c, 'info>(
-    ctx: Context<'a, 'b, 'c, 'info, RaydiumCpSwapToGamma<'info>>,
+pub fn raydium_cp_swap_to_gamma<'info>(
+    ctx: Context<'info, RaydiumCpSwapToGamma<'info>>,
     lp_token_amount_withdraw: u64,
     minimum_token_0_amount: u64,
     minimum_token_1_amount: u64,
@@ -170,7 +170,7 @@ pub fn raydium_cp_swap_to_gamma<'a, 'b, 'c, 'info>(
         memo_program: ctx.accounts.memo_program.to_account_info(),
     };
     let cpi_context = CpiContext::new(
-        ctx.accounts.raydium_cp_swap_program.to_account_info(),
+        ctx.accounts.raydium_cp_swap_program.key(),
         cpi_accounts,
     );
     crate::external::raydium_cp::raydium_cp_swap::cpi::withdraw(

@@ -3,10 +3,10 @@ pub mod error;
 pub mod external;
 pub mod fees;
 pub mod instructions;
+pub mod integration;
 pub mod migration;
 pub mod states;
 pub mod utils;
-pub mod integration;
 
 use anchor_lang::prelude::*;
 use instructions::*;
@@ -235,15 +235,12 @@ pub mod gamma {
     /// * `minimum_token_0_amount` -  Minimum amount of token 0 to receive, prevents excessive slippage
     /// * `minimum_token_1_amount` -  Minimum amount of token 1 to receive, prevents excessive slippage
     ///
-    pub fn withdraw<'c, 'info>(
-        ctx: Context<'_, '_, 'c, 'info, Withdraw<'info>>,
+    pub fn withdraw<'info>(
+        ctx: Context<'info, Withdraw<'info>>,
         lp_token_amount: u64,
         minimum_token_0_amount: u64,
         minimum_token_1_amount: u64,
-    ) -> Result<()>
-    where
-        'c: 'info,
-    {
+    ) -> Result<()> {
         instructions::withdraw(
             ctx,
             lp_token_amount,
@@ -261,8 +258,8 @@ pub mod gamma {
     /// * `minimum_amount_out` -  Minimum amount of output token, prevents excessive slippage
     ///
     /// #[deprecated(note = "Use oracle_based_swap_base_input instead")]
-    pub fn swap_base_input<'c, 'info>(
-        ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
+    pub fn swap_base_input<'info>(
+        ctx: Context<'info, Swap<'info>>,
         amount_in: u64,
         minimum_amount_out: u64,
     ) -> Result<()> {
@@ -278,8 +275,8 @@ pub mod gamma {
     /// * `amount_out` -  amount of output token
     ///
     /// #[deprecated(note = "Use oracle_based_swap_base_input instead")]
-    pub fn swap_base_output<'c, 'info>(
-        ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
+    pub fn swap_base_output<'info>(
+        ctx: Context<'info, Swap<'info>>,
         max_amount_in: u64,
         amount_out: u64,
     ) -> Result<()> {
@@ -293,8 +290,8 @@ pub mod gamma {
     /// * `ctx`- The context of accounts
     /// * `amount_in` -  input amount to transfer, output to DESTINATION is based on the exchange rate
     /// * `minimum_amount_out` -  Minimum amount of output token, prevents excessive slippage
-    pub fn oracle_based_swap_base_input<'c, 'info>(
-        ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
+    pub fn oracle_based_swap_base_input<'info>(
+        ctx: Context<'info, Swap<'info>>,
         amount_in: u64,
         minimum_amount_out: u64,
     ) -> Result<()> {
@@ -345,8 +342,8 @@ pub mod gamma {
 
     /// Migrate from Meteora Dlmm to Gamma
 
-    pub fn migrate_meteora_dlmm_to_gamma<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, MeteoraDlmmToGamma<'info>>,
+    pub fn migrate_meteora_dlmm_to_gamma<'info>(
+        ctx: Context<'info, MeteoraDlmmToGamma<'info>>,
         bin_liquidity_reduction: Vec<crate::external::dlmm::lb_clmm::types::BinLiquidityReduction>,
         maximum_token_0_amount: u64,
         maximum_token_1_amount: u64,
@@ -361,8 +358,8 @@ pub mod gamma {
 
     /// Migrate from Orca Whirlpool to Gamma for token 2022
 
-    pub fn migrate_orca_whirlpool_to_gamma_v2<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, OrcaWhirlpoolToGammaV2<'info>>,
+    pub fn migrate_orca_whirlpool_to_gamma_v2<'info>(
+        ctx: Context<'info, OrcaWhirlpoolToGammaV2<'info>>,
         liquidity_amount: u128,
         token_min_a: u64,
         token_min_b: u64,
@@ -385,8 +382,8 @@ pub mod gamma {
 
     /// Migrate from Orca Whirlpool to Gamma for simple spl tokens
 
-    pub fn migrate_orca_whirlpool_to_gamma<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, OrcaWhirlpoolToGamma<'info>>,
+    pub fn migrate_orca_whirlpool_to_gamma<'info>(
+        ctx: Context<'info, OrcaWhirlpoolToGamma<'info>>,
         liquidity_amount: u128,
         token_min_a: u64,
         token_min_b: u64,
@@ -405,8 +402,8 @@ pub mod gamma {
 
     /// Migrate from Raydium Clmm to Gamma
 
-    pub fn migrate_raydium_clmm_to_gamma<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, RaydiumClmmToGamma<'info>>,
+    pub fn migrate_raydium_clmm_to_gamma<'info>(
+        ctx: Context<'info, RaydiumClmmToGamma<'info>>,
         liquidity: u128,
         amount_0_min: u64,
         amount_1_min: u64,
@@ -425,8 +422,8 @@ pub mod gamma {
 
     /// Migrate from Raydium Clmm to Gamma for token 2022
 
-    pub fn migrate_raydium_clmm_to_gamma_v2<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, RaydiumClmmToGammaV2<'info>>,
+    pub fn migrate_raydium_clmm_to_gamma_v2<'info>(
+        ctx: Context<'info, RaydiumClmmToGammaV2<'info>>,
         liquidity: u128,
         amount_0_min: u64,
         amount_1_min: u64,
@@ -445,8 +442,8 @@ pub mod gamma {
 
     /// Migrate from Raydium Cpmm Swap to Gamma
 
-    pub fn migrate_raydium_cp_swap_to_gamma<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, RaydiumCpSwapToGamma<'info>>,
+    pub fn migrate_raydium_cp_swap_to_gamma<'info>(
+        ctx: Context<'info, RaydiumCpSwapToGamma<'info>>,
         lp_token_amount_withdraw: u64,
         minimum_token_0_amount: u64,
         minimum_token_1_amount: u64,
@@ -463,9 +460,7 @@ pub mod gamma {
         )
     }
 
-    pub fn rebalance_kamino<'a, 'b, 'c, 'info>(
-        ctx: Context<'a, 'b, 'c, 'info, Rebalance<'info>>,
-    ) -> Result<()> {
+    pub fn rebalance_kamino<'info>(ctx: Context<'info, Rebalance<'info>>) -> Result<()> {
         instructions::rebalance_kamino(ctx)
     }
 }

@@ -5,13 +5,14 @@ use crate::{
     states::{PoolState, POOL_KAMINO_DEPOSITS_SEED},
 };
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::sysvar::instructions::ID as INSTRUCTION_SYSVAR_ID;
+
+use solana_sdk_ids::sysvar::instructions::ID as INSTRUCTION_SYSVAR_ID;
 use anchor_spl::{
     token::Token,
     token_2022::Token2022,
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
-use borsh::BorshDeserialize;
+use ::borsh::BorshDeserialize;
 
 #[derive(Accounts)]
 pub struct Rebalance<'info> {
@@ -84,7 +85,7 @@ pub struct Rebalance<'info> {
     )]
     pub gamma_pool_destination_collateral: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    #[account(address = INSTRUCTION_SYSVAR_ID )]
+    #[account(address = INSTRUCTION_SYSVAR_ID)]
     /// CHECK: The native instructions sysvar
     pub instruction_sysvar_account: UncheckedAccount<'info>,
 
@@ -101,8 +102,8 @@ pub struct Rebalance<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn rebalance_kamino<'c, 'info>(
-    ctx: Context<'_, '_, 'c, 'info, Rebalance<'info>>,
+pub fn rebalance_kamino<'info>(
+    ctx: Context<'info, Rebalance<'info>>,
 ) -> Result<()> {
     let deposit_withdraw_amounts = get_deposit_withdraw_amounts(
         ctx.accounts.pool_state.clone(),
@@ -339,12 +340,12 @@ pub fn load_account<T: BorshDeserialize>(account_info: &AccountInfo) -> Result<T
 }
 
 pub fn deposit_in_kamino<'c, 'info>(
-    ctx: &Context<'_, '_, 'c, 'info, Rebalance<'info>>,
+    ctx: &Context<'info, Rebalance<'info>>,
     amount: u64,
     signer_seeds: &[&[&[u8]]],
 ) -> Result<()> {
     let kamino_deposit_cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.kamino_program.to_account_info(),
+        ctx.accounts.kamino_program.key(),
         crate::external::kamino::kamino::cpi::accounts::DepositReserveLiquidity {
             owner: ctx.accounts.gamma_authority.to_account_info(),
             reserve: ctx.accounts.kamino_reserve.to_account_info(),
@@ -372,12 +373,12 @@ pub fn deposit_in_kamino<'c, 'info>(
 }
 
 pub fn withdraw_from_kamino<'c, 'info>(
-    ctx: &Context<'_, '_, 'c, 'info, Rebalance<'info>>,
+    ctx: &Context<'info, Rebalance<'info>>,
     amount: u64,
     signer_seeds: &[&[&[u8]]],
 ) -> Result<()> {
     let kamino_withdraw_cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.kamino_program.to_account_info(),
+        ctx.accounts.kamino_program.key(),
         crate::external::kamino::kamino::cpi::accounts::RedeemReserveCollateral {
             owner: ctx.accounts.gamma_authority.to_account_info(),
             reserve: ctx.accounts.kamino_reserve.to_account_info(),

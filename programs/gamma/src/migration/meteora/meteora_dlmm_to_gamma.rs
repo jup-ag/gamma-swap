@@ -172,7 +172,7 @@ pub fn meteora_dlmm_to_gamma(
         program: ctx.accounts.dlmm_program.to_account_info(),
     };
 
-    let cpi_ctx = CpiContext::new(ctx.accounts.dlmm_program.to_account_info(), accounts);
+    let cpi_ctx = CpiContext::new(ctx.accounts.dlmm_program.key(), accounts);
     crate::external::dlmm::lb_clmm::cpi::remove_liquidity(cpi_ctx, bin_liquidity_reduction)?;
 
     ctx.accounts.gamma_token_0_account.reload()?;

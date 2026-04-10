@@ -9,7 +9,6 @@ use referral::program::Referral;
 use referral::InitializeProjectParams;
 
 #[derive(Accounts)]
-#[instruction(index: u16)]
 pub struct CreateReferralProject<'info> {
     /// Admin signer for this operation
     #[account(constraint = [crate::admin::ID, amm_config.secondary_admin].contains(&owner.key()) @ GammaError::InvalidOwner)]
@@ -50,7 +49,7 @@ pub fn create_referral_project(
     let signer_seeds = &[&seeds[..]];
 
     let ctx = CpiContext::new_with_signer(
-        ctx.accounts.referral_program.to_account_info(),
+        ctx.accounts.referral_program.key(),
         InitializeProject {
             payer: ctx.accounts.payer.to_account_info(),
             base: ctx.accounts.amm_config.to_account_info(),

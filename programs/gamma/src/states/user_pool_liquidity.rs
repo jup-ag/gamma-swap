@@ -1,7 +1,5 @@
 use anchor_lang::prelude::*;
 
-use super::PartnerType;
-
 pub const USER_POOL_LIQUIDITY_SEED: &str = "user-pool-liquidity";
 
 #[account]
@@ -14,7 +12,7 @@ pub struct UserPoolLiquidity {
     pub token_0_withdrawn: u128,
     pub token_1_withdrawn: u128,
     pub lp_tokens_owned: u128,
-    pub partner: Option<PartnerType>,
+    pub partner_id: Option<u64>,
     pub first_investment_at: u64,
     pub padding: [u8; 15],
 }
@@ -26,7 +24,7 @@ impl UserPoolLiquidity {
         &mut self,
         user: Pubkey,
         pool_state: Pubkey,
-        partner: Option<PartnerType>,
+        partner_id: Option<u64>,
         current_time: u64,
     ) {
         self.user = user;
@@ -36,7 +34,7 @@ impl UserPoolLiquidity {
         self.token_0_withdrawn = 0;
         self.token_1_withdrawn = 0;
         self.lp_tokens_owned = 0;
-        self.partner = partner;
+        self.partner_id = partner_id;
         self.first_investment_at = current_time;
         self.padding = [0u8; 15];
     }

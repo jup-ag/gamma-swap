@@ -286,16 +286,12 @@ pub fn initialize(
                 ctx.accounts.system_program.to_account_info(),
             ],
         )?;
-        invoke(
-            &spl_token::instruction::sync_native(
-                ctx.accounts.token_program.key,
-                &ctx.accounts.create_pool_fee.key(),
-            )?,
-            &[
-                ctx.accounts.token_program.to_account_info(),
-                ctx.accounts.create_pool_fee.to_account_info(),
-            ],
-        )?;
+        anchor_spl::token::sync_native(CpiContext::new(
+            ctx.accounts.token_program.key(),
+            anchor_spl::token::SyncNative {
+                account: ctx.accounts.create_pool_fee.to_account_info(),
+            },
+        ))?;
     }
 
     pool_state.initialize(

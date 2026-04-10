@@ -2,12 +2,14 @@ use crate::{deserialize_anchor_account, ClientConfig};
 use anyhow::Result;
 use arrayref::array_ref;
 use solana_client::rpc_client::RpcClient;
-use solana_sdk::pubkey::Pubkey;
-use solana_sdk::signature::read_keypair_file;
-use solana_sdk::signer::Signer;
+use solana_keypair::read_keypair_file;
+use solana_pubkey::Pubkey;
+use solana_signer::Signer;
 use spl_associated_token_account::get_associated_token_address;
-use spl_token_2022::extension::StateWithExtensionsMut;
-use spl_token_2022::state::{Account as TokenAccount, Mint};
+use spl_token_2022_interface::{
+    extension::StateWithExtensionsMut,
+    state::{Account as TokenAccount, Mint},
+};
 use std::process::Command;
 use std::str::FromStr;
 

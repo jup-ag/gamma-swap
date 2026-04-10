@@ -1,8 +1,9 @@
 use anchor_lang::AccountDeserialize;
 use anyhow::Result;
 use solana_client::rpc_client::RpcClient;
-use solana_sdk::{account::Account, pubkey::Pubkey};
-use spl_token_2022::{
+use solana_account::Account;
+use solana_pubkey::Pubkey;
+use spl_token_2022_interface::{
     extension::{
         transfer_fee::{TransferFeeConfig, MAX_FEE_BASIS_POINTS},
         BaseState, BaseStateWithExtensions, StateWithExtensionsMut,

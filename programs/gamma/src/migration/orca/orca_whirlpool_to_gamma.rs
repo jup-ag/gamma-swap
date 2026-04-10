@@ -28,7 +28,7 @@ pub struct OrcaWhirlpoolToGamma<'info> {
 
     /// CHECK: Memo program
     #[account(
-        address = spl_memo::id()
+        address = Pubkey::new_from_array(spl_memo_interface::v3::id().to_bytes())
     )]
     pub memo_program: UncheckedAccount<'info>,
 
@@ -143,7 +143,7 @@ pub struct OrcaWhirlpoolToGamma<'info> {
 }
 
 pub fn orca_whirlpool_to_gamma<'info>(
-    ctx: Context<'_, '_, '_, 'info, OrcaWhirlpoolToGamma<'info>>,
+    ctx: Context<'info, OrcaWhirlpoolToGamma<'info>>,
     liquidity_amount: u128,
     token_min_a: u64,
     token_min_b: u64,
@@ -171,7 +171,7 @@ pub fn orca_whirlpool_to_gamma<'info>(
         tick_array_upper: ctx.accounts.whirlpool_tick_array_upper.to_account_info(),
     };
 
-    let cpi_ctx = CpiContext::new(ctx.accounts.whirlpool_program.to_account_info(), accounts);
+    let cpi_ctx = CpiContext::new(ctx.accounts.whirlpool_program.key(), accounts);
     crate::external::whirlpool::whirlpool::cpi::decrease_liquidity(
         cpi_ctx,
         liquidity_amount,

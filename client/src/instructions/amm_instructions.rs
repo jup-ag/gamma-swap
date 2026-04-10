@@ -1,8 +1,12 @@
 use anchor_client::{Client, Cluster};
 use anyhow::Result;
 use gamma::states::USER_POOL_LIQUIDITY_SEED;
-use solana_sdk::signer::Signer;
-use solana_sdk::{instruction::Instruction, pubkey::Pubkey, system_program, sysvar};
+use anchor_lang::{prelude::rent, solana_program::system_program};
+use solana_pubkey::Pubkey;
+use solana_signer::Signer;
+use solana_transaction::Instruction;
+use spl_token_2022_interface as spl_token_2022;
+use spl_token_interface as spl_token;
 
 use gamma::accounts as gamma_accounts;
 use gamma::instruction as gamma_instructions;
@@ -49,7 +53,7 @@ pub fn create_config_instr(
             // 5 days
             max_open_time: 5 * 86400,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -155,7 +159,7 @@ pub fn initialize_pool_instr(
             token_1_program,
             associated_token_program: spl_associated_token_account::id(),
             system_program: system_program::id(),
-            rent: sysvar::rent::id(),
+            rent: rent::id(),
         })
         .args(gamma_instructions::Initialize {
             init_amount_0,
@@ -164,7 +168,7 @@ pub fn initialize_pool_instr(
             max_trade_fee_rate: 1000000,
             volatility_factor: 0,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -253,7 +257,7 @@ pub fn deposit_instr(
             maximum_token_0_amount,
             maximum_token_1_amount,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -306,7 +310,7 @@ pub fn withdraw_instr(
             vault_0_mint: token_0_mint,
             vault_1_mint: token_1_mint,
             // lp_mint: token_lp_mint,
-            memo_program: spl_memo::id(),
+            memo_program: spl_memo_interface::v3::id(),
             kamino_program: todo!(),
             instruction_sysvar_account: todo!(),
         })
@@ -315,7 +319,7 @@ pub fn withdraw_instr(
             minimum_token_0_amount,
             minimum_token_1_amount,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -364,7 +368,7 @@ pub fn swap_base_input_instr(
             amount_in,
             minimum_amount_out,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -413,7 +417,7 @@ pub fn swap_base_output_instr(
             max_amount_in,
             amount_out,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }
 
@@ -449,6 +453,6 @@ pub fn init_user_pool_liquidity_instr(
         .args(gamma_instructions::InitUserPoolLiquidity {
             partner: None,
         })
-        .instructions()?;
+        .instructions();
     Ok(instructions)
 }

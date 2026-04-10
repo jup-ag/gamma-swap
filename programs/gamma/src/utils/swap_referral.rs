@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use referral::ReferralAccount;
 use referral::REFERRAL_ATA_SEED;
-use spl_token::state::{Account as SplTokenAccount, GenericTokenAccount};
+use spl_token_interface::state::{Account as SplTokenAccount, GenericTokenAccount};
 
 use crate::error::GammaError;
 
@@ -27,7 +27,7 @@ pub fn extract_referral_info<'c, 'info>(
     let referral_token_account = referral_token_account.as_ref().unwrap();
 
     // check: Referral account belongs to referral program and is for project
-    require_keys_eq!(*referral_account.owner, referral::ID);
+    require_keys_eq!(*referral_account.owner, Pubkey::new_from_array(referral::ID.to_bytes()));
     let referral = ReferralAccount::try_deserialize(&mut &referral_account.data.borrow()[..])?;
     require_keys_eq!(project_key, referral.project);
 
@@ -38,7 +38,7 @@ pub fn extract_referral_info<'c, 'info>(
             referral_account.key().as_ref(),
             input_token_mint.key().as_ref(),
         ],
-        &referral::ID,
+        &Pubkey::new_from_array(referral::ID.to_bytes()),
     )
     .0;
     require_keys_eq!(referral_token_account.key(), expect_token_account_key);
@@ -55,7 +55,7 @@ pub fn extract_referral_info<'c, 'info>(
             .ok_or(anchor_lang::error::Error::from(
                 ProgramError::InvalidAccountData,
             ))?;
-    require_keys_eq!(project_key, *token_account_owner);
+    require_keys_eq!(project_key, Pubkey::new_from_array(token_account_owner.to_bytes()));
 
     Ok(Some(ReferralDetails {
         share_bps: referral.share_bps, // the referral program guarantees that this is < 10_000

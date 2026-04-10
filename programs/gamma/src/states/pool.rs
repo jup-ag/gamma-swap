@@ -24,14 +24,18 @@ pub enum PoolStatusBitFlag {
     Disable,
 }
 
-#[derive(Default, Debug, PartialEq, Eq, Clone, Copy, AnchorDeserialize, AnchorSerialize)]
+#[derive(Default, Debug, PartialEq, Eq, Clone, Copy)]
 #[repr(u64)]
 pub enum PartnerType {
     #[default]
-    AssetDash = 0,
+    AssetDash,
 }
 
 impl PartnerType {
+    pub const fn id(self) -> u64 {
+        self as u64
+    }
+
     pub fn new(value: u64) -> Self {
         match value {
             0 => PartnerType::AssetDash,

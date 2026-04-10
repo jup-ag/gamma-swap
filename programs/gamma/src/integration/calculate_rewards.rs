@@ -6,7 +6,9 @@ use crate::gamma::{
     REWARD_INFO_SEED, USER_REWARD_INFO_SEED,
 };
 use solana_program_test::tokio;
-use solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer};
+use solana_keypair::Keypair;
+use solana_pubkey::Pubkey;
+use solana_signer::Signer;
 mod utils;
 
 use utils::*;

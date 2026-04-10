@@ -114,8 +114,8 @@ impl<'info> SwapRemainingAccounts<'info> {
     }
 }
 
-pub fn swap_base_input<'c, 'info>(
-    ctx: Context<'_, '_, 'c, 'info, Swap<'info>>,
+pub fn swap_base_input<'info>(
+    ctx: Context<'info, Swap<'info>>,
     amount_in: u64,
     minimum_amount_out: u64,
 ) -> Result<()> {
@@ -457,7 +457,7 @@ pub fn swap_base_input<'c, 'info>(
         let info = referral_info.expect("referral_info to be non-null");
         anchor_spl::token_2022::transfer_checked(
             CpiContext::new(
-                ctx.accounts.input_token_program.to_account_info(),
+                ctx.accounts.input_token_program.key(),
                 anchor_spl::token_2022::TransferChecked {
                     from: ctx.accounts.input_token_account.to_account_info(),
                     to: info.referral_token_account.to_account_info(),

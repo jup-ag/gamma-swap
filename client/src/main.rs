@@ -5,13 +5,15 @@ use arrayref::array_ref;
 use clap::{Parser, Subcommand};
 use dotenv::dotenv;
 use solana_client::{rpc_client::RpcClient, rpc_config::RpcTransactionConfig};
-use solana_sdk::pubkey::Pubkey;
-use solana_sdk::{
-    commitment_config::CommitmentConfig,
-    signature::{Keypair, Signature, Signer},
-    transaction::Transaction,
-};
-use solana_transaction_status::UiTransactionEncoding;
+use solana_commitment_config::CommitmentConfig;
+use solana_keypair::{read_keypair_file as read_keypair, Keypair};
+use solana_pubkey::Pubkey;
+use solana_signature::Signature;
+use solana_signer::Signer;
+use solana_transaction::Transaction;
+use solana_transaction_status_client_types::UiTransactionEncoding;
+use spl_token_2022_interface as spl_token_2022;
+use spl_token_interface as spl_token;
 use std::env;
 use std::rc::Rc;
 use std::str::FromStr;
@@ -84,8 +86,7 @@ fn load_cfg(opts: &Opts) -> Result<ClientConfig, Box<dyn std::error::Error>> {
 }
 
 fn read_keypair_file(s: &str) -> Result<Keypair> {
-    solana_sdk::signature::read_keypair_file(s)
-        .map_err(|_| format_err!("failed to read keypair from {}", s))
+    read_keypair(s).map_err(|_| format_err!("failed to read keypair from {}", s))
 }
 #[derive(Parser, Debug)]
 #[clap(name = "gamma-cli")]

@@ -4,7 +4,8 @@ use gamma::curve::TradeDirection;
 use gamma::states::PartnerType;
 use gamma::states::PoolState;
 use solana_program_test::tokio;
-use solana_sdk::{signature::Keypair, signer::Signer};
+use solana_keypair::Keypair;
+use solana_signer::Signer;
 mod utils;
 
 use utils::*;

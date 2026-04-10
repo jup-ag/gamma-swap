@@ -2,7 +2,7 @@ use crate::{
     curve::{CurveCalculator, RoundDirection},
     error::GammaError,
     states::{
-        LpChangeEvent, PartnerType, PoolState, PoolStatusBitIndex, UserPoolLiquidity,
+        LpChangeEvent, PoolState, PoolStatusBitIndex, UserPoolLiquidity,
         USER_POOL_LIQUIDITY_SEED,
     },
     utils::{get_transfer_inverse_fee, transfer_from_user_to_pool_vault},
@@ -240,11 +240,11 @@ pub fn deposit_to_gamma_pool(
         .ok_or(GammaError::MathOverflow)?;
     pool_state.recent_epoch = Clock::get()?.epoch;
 
-    if let Some(user_pool_liquidity_partner) = user_pool_liquidity.partner {
+    if let Some(user_pool_liquidity_partner_id) = user_pool_liquidity.partner_id {
         let mut pool_state_partners = pool_state.partners;
         let partner: Option<&mut crate::states::PartnerInfo> = pool_state_partners
             .iter_mut()
-            .find(|p| PartnerType::new(p.partner_id) == user_pool_liquidity_partner);
+            .find(|p| p.partner_id == user_pool_liquidity_partner_id);
         if let Some(partner) = partner {
             partner.lp_token_linked_with_partner = partner
                 .lp_token_linked_with_partner

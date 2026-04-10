@@ -2,19 +2,14 @@ use crate::error::GammaError;
 use anchor_lang::prelude::*;
 use anchor_spl::{
     token::{Token, TokenAccount},
-    token_2022::{
-        self,
-        spl_token_2022::{
-            self,
-            extension::{
-                transfer_fee::{TransferFeeConfig, MAX_FEE_BASIS_POINTS},
-                ExtensionType, StateWithExtensions,
-            },
-        },
-    },
-    token_interface::{
-        initialize_account3, spl_token_2022::extension::BaseStateWithExtensions,
-        InitializeAccount3, Mint,
+    token_2022::{self},
+    token_interface::{initialize_account3, InitializeAccount3, Mint},
+};
+use spl_token_2022_interface::{
+    self as spl_token_2022,
+    extension::{
+        transfer_fee::{TransferFeeConfig, MAX_FEE_BASIS_POINTS},
+        BaseStateWithExtensions, ExtensionType, StateWithExtensions,
     },
 };
 use std::collections::HashSet;
@@ -40,7 +35,7 @@ pub fn transfer_from_user_to_pool_vault<'a>(
     }
     token_2022::transfer_checked(
         CpiContext::new(
-            token_program.to_account_info(),
+            token_program.key(),
             token_2022::TransferChecked {
                 from,
                 to: to_vault,
@@ -68,7 +63,7 @@ pub fn transfer_from_pool_vault_to_user<'a>(
     }
     token_2022::transfer_checked(
         CpiContext::new_with_signer(
-            token_program.to_account_info(),
+            token_program.key(),
             token_2022::TransferChecked {
                 from: from_vault,
                 to,
@@ -93,7 +88,7 @@ pub fn token_mint_to<'a>(
 ) -> Result<()> {
     token_2022::mint_to(
         CpiContext::new_with_signer(
-            token_program,
+            token_program.key(),
             token_2022::MintTo {
                 to: destination,
                 authority,
@@ -115,7 +110,7 @@ pub fn token_burn<'a>(
 ) -> Result<()> {
     token_2022::burn(
         CpiContext::new_with_signer(
-            token_program.to_account_info(),
+            token_program.key(),
             token_2022::Burn {
                 from,
                 authority,
@@ -226,15 +221,15 @@ pub fn create_token_account<'a>(
         from: payer.to_account_info(),
         to: token_account.to_account_info(),
     };
-    let cpi_context = CpiContext::new(system_program.to_account_info(), cpi_accounts);
+    let cpi_context = CpiContext::new(system_program.key(), cpi_accounts);
     anchor_lang::system_program::create_account(
         cpi_context.with_signer(signer_seeds),
         lamports,
         space as u64,
-        token_program.key,
+        &token_program.key(),
     )?;
     initialize_account3(CpiContext::new(
-        token_program.to_account_info(),
+        token_program.key(),
         InitializeAccount3 {
             account: token_account.to_account_info(),
             mint: mint_account.to_account_info(),

@@ -3,7 +3,8 @@ use gamma::{
     states::{ObservationState, PoolState},
 };
 use solana_program_test::tokio;
-use solana_sdk::{signature::Keypair, signer::Signer};
+use solana_keypair::Keypair;
+use solana_signer::Signer;
 mod utils;
 
 use utils::*;

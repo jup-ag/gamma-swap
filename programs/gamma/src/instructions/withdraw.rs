@@ -5,12 +5,13 @@ use anchor_spl::token_interface::{Mint, Token2022, TokenAccount};
 use crate::curve::{CurveCalculator, RoundDirection};
 use crate::external::kamino::KaminoProgram;
 use crate::states::{
-    LpChangeEvent, PartnerType, PoolStatusBitIndex, UserPoolLiquidity, POOL_KAMINO_DEPOSITS_SEED,
+    LpChangeEvent, PoolStatusBitIndex, UserPoolLiquidity, POOL_KAMINO_DEPOSITS_SEED,
     USER_POOL_LIQUIDITY_SEED,
 };
 use crate::utils::{get_transfer_fee, transfer_from_pool_vault_to_user};
 use crate::{error::GammaError, states::PoolState};
-use anchor_lang::solana_program::sysvar::instructions::ID as INSTRUCTION_SYSVAR_ID;
+use solana_sdk_ids::sysvar::instructions::ID as INSTRUCTION_SYSVAR_ID;
+
 
 use super::calculate_amount_to_be_withdrawn_from_kamino_in_withdraw_instruction_in_liquidity_tokens;
 
@@ -97,26 +98,23 @@ pub struct Withdraw<'info> {
     /// memo program
     /// CHECK:
     #[account(
-        address = spl_memo::id()
+        address = Pubkey::new_from_array(spl_memo_interface::v3::id().to_bytes())
     )]
     pub memo_program: UncheckedAccount<'info>,
 
     pub kamino_program: Program<'info, KaminoProgram>,
 
-    #[account(address = INSTRUCTION_SYSVAR_ID )]
+    #[account(address = INSTRUCTION_SYSVAR_ID)]
     /// CHECK: The native instructions sysvar
     pub instruction_sysvar_account: UncheckedAccount<'info>,
 }
 
-pub fn withdraw<'c, 'info>(
-    ctx: Context<'_, '_, 'c, 'info, Withdraw<'info>>,
+pub fn withdraw<'info>(
+    ctx: Context<'info, Withdraw<'info>>,
     lp_token_amount: u64,
     minimum_token_0_amount: u64,
     minimum_token_1_amount: u64,
-) -> Result<()>
-where
-    'c: 'info,
-{
+) -> Result<()> {
     require_gt!(lp_token_amount, 0);
     let pool_id = ctx.accounts.pool_state.key();
     let pool_state = &mut ctx.accounts.pool_state.load_mut()?;
@@ -220,11 +218,11 @@ where
         .checked_add(u128::from(receive_token_1_amount))
         .ok_or(GammaError::MathOverflow)?;
 
-    if let Some(user_pool_liquidity_partner) = user_pool_liquidity.partner {
+    if let Some(user_pool_liquidity_partner_id) = user_pool_liquidity.partner_id {
         let mut pool_state_partners = pool_state.partners;
         let partner: Option<&mut crate::states::PartnerInfo> = pool_state_partners
             .iter_mut()
-            .find(|p| PartnerType::new(p.partner_id) == user_pool_liquidity_partner);
+            .find(|p| p.partner_id == user_pool_liquidity_partner_id);
         if let Some(partner) = partner {
             partner.lp_token_linked_with_partner = partner
                 .lp_token_linked_with_partner
@@ -310,14 +308,11 @@ pub struct RemainingKaminoAccounts<'info> {
 }
 
 pub fn withdraw_from_kamino_if_needed<'c, 'info>(
-    ctx: &Context<'_, '_, 'c, 'info, Withdraw<'info>>,
+    ctx: &Context<'info, Withdraw<'info>>,
     pool_state: &mut PoolState,
     token_amount_being_withdrawn: u64,
     token0_or_token1: bool,
-) -> Result<()>
-where
-    'c: 'info,
-{
+) -> Result<()> {
     let remaining_accounts = &ctx.remaining_accounts;
     let token_vault = match token0_or_token1 {
         true => &ctx.accounts.token_0_vault,
@@ -376,7 +371,7 @@ where
         };
 
     let kamino_withdraw_cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.kamino_program.to_account_info(),
+        ctx.accounts.kamino_program.key(),
         crate::external::kamino::kamino::cpi::accounts::RedeemReserveCollateral {
             owner: ctx.accounts.authority.to_account_info(),
             reserve: kamino_accounts.kamino_reserve_token.to_account_info(),

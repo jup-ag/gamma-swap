@@ -5,10 +5,12 @@ use solana_client::{
     rpc_request::RpcRequest,
     rpc_response::{RpcResult, RpcSimulateTransactionResult},
 };
-use solana_sdk::{
-    account::Account, commitment_config::CommitmentConfig, program_pack::Pack as TokenPack,
-    pubkey::Pubkey, signature::Signature, transaction::Transaction,
-};
+use solana_account::Account;
+use solana_commitment_config::CommitmentConfig;
+use solana_program_pack::Pack as TokenPack;
+use solana_pubkey::Pubkey;
+use solana_signature::Signature;
+use solana_transaction::Transaction;
 use std::convert::Into;
 
 pub fn simulate_transaction(
