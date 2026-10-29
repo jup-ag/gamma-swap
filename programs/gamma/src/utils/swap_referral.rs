@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use referral::ReferralAccount;
 use referral::REFERRAL_ATA_SEED;
-use spl_token_interface::state::{Account as SplTokenAccount, GenericTokenAccount};
+use anchor_spl::token::spl_token::state::{Account as SplTokenAccount, GenericTokenAccount};
 
 use crate::error::GammaError;
 
