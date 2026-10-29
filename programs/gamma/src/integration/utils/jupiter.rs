@@ -8,12 +8,12 @@ use jupiter_amm_interface::{
 };
 use rust_decimal::prelude::FromPrimitive;
 use solana_pubkey::Pubkey;
-use spl_token_2022_interface::extension::BaseStateWithExtensions;
-use spl_token_2022_interface::extension::{
+use anchor_spl::token_2022::spl_token_2022::extension::BaseStateWithExtensions;
+use anchor_spl::token_2022::spl_token_2022::extension::{
     transfer_fee::TransferFeeConfig, StateWithExtensions, StateWithExtensionsOwned,
 };
-use spl_token_2022_interface as spl_token_2022;
-use spl_token_2022_interface::state::Mint;
+use anchor_spl::token_2022::spl_token_2022;
+use anchor_spl::token_2022::spl_token_2022::state::Mint;
 use std::sync::atomic::{AtomicI64, AtomicU64};
 use std::sync::Arc;
 

@@ -5,7 +5,7 @@ use anchor_spl::{
     token_2022::{self},
     token_interface::{initialize_account3, InitializeAccount3, Mint},
 };
-use spl_token_2022_interface::{
+use anchor_spl::token_2022::spl_token_2022::{
     self as spl_token_2022,
     extension::{
         transfer_fee::{TransferFeeConfig, MAX_FEE_BASIS_POINTS},

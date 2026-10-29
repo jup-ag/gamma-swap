@@ -36,7 +36,6 @@ bytemuck = { workspace = true }
 fixed = { workspace = true }
 fixed-macro = { workspace = true }
 anyhow = { workspace = true }
-spl-token-2022-interface = { workspace = true }
 solana-sdk-ids = { workspace = true }
 solana-pubkey = { workspace = true }
 jupiter-amm-interface = { workspace = true }
@@ -57,7 +56,6 @@ solana-signer = { workspace = true }
 static_init = { workspace = true }
 rust_decimal = { workspace = true }
 jupiter-amm-interface = { workspace = true }
-spl-token-2022-interface = { workspace = true }
 anyhow = { workspace = true }
 ahash = { workspace = true }
 serde = { workspace = true }
